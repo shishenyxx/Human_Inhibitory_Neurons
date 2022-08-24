@@ -1,4 +1,4 @@
-# Identifying Brian Cell Types from Single Nuclei Collected from Ethanol Fixed FANS Sorting and Methylome Analyses
+# Identifying Brian Cell Types from Single Nuclei Collected from Methanol-Fixed FANS Sorting and Methylome Analyses
 
 -----------------------------
 
