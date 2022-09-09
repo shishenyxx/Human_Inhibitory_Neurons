@@ -23,9 +23,9 @@ This repository contains codes and pipelines for the analysis for human interneu
 
 ### 3. Identification the cell types by using whole-genome bisulfite sequencing analysis
 
-#### 3.1 Pipelines for methylome analysis using BisMark
+#### 3.1 [Pipelines](https://github.com/shishenyxx/Human_Interneuron/tree/main/Methylome) for methylome analysis using BisMark
 
-#### 3.2 Statical analysis combining published standards to identify the cell ty pes
+#### 3.2 [Statical analysis](https://github.com/shishenyxx/Human_Interneuron/blob/main/Methylome/plots/Human_Interneuron_Methylome_Plots.ipynb) combining published standards to identify the cell types
 
 -----------------------------------
 
