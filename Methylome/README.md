@@ -41,3 +41,13 @@ Refer to the [snakemake documentation](https://snakemake.readthedocs.io/en/stabl
 ## Output
 Important outputs will be found in output folder.
 Intermediate files will be found in scratch folder.
+
+----------------------------
+
+## Verification of Cell types
+
+Human single-cell methylation data from published literature [PMID: 28798132](https://www.science.org/doi/10.1126/science.aan3351) was downloaded, and reads from excitatory neurons and inhibitory neuros were pooled separately and used as positive controls. 
+
+[Codes](https://github.com/shishenyxx/Human_Interneuron/blob/main/Methylome/plots/Human_Interneuron_Methylome_Plots.ipynb) for plotting the cosine similarity and hierarchical clustering of methylation patterns of gold-standard inhibitory neurons, sorted DLX1 positive cells, excitatory neurons, sorted TBR1 positive cells. And control samples from heart, cortical microglia, and cortical oligodendrocytes.
+
+
