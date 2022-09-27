@@ -39,6 +39,12 @@ This repository contains codes and pipelines for the analysis for human interneu
 
 ### 5. Contact:
 
+:email: Changuk Chung: [chchung@health.ucsd.edu](mailto:chchung@health.ucsd.edu)
+
+:email: Xiaoxu Yang: [xiy010@health.ucsd.edu](mailto:xiy010@health.ucsd.edu), [yangxiaoxu-shishen@hotmail.com](mailto:yangxiaoxu-shishen@hotmail.com)
+
+:email: Joseph Gleeson: [jogleeson@health.ucsd.edu](mailto:jogleeson@health.ucsd.edu), or the Gleeson lab [gleesonlab@health.ucsd.edu](gleesonlab@health.ucsd.edu)
+
 -----------------------------------
 
 ### 6. Cite the data and codes:
