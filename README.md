@@ -37,7 +37,7 @@ After alignment, candidate variants were further combined and genotyped using [t
 
 ### 3. Identification the cell types by using whole-genome bisulfite sequencing analysis
 
-#### 3.1 [Pipelines](https://github.com/shishenyxx/Human_Interneuron/tree/main/Methylome) for methylome analysis using BisMark
+#### 3.1 [Pipelines](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/Methylome) for methylome analysis using BisMark
 
 #### 3.2 [Statical analysis](https://github.com/shishenyxx/Human_Interneuron/blob/main/Methylome/plots/Human_Interneuron_Methylome_Plots.ipynb) combining published standards to identify the cell types
 
