@@ -1,6 +1,6 @@
 # Snakemake pipeline for preprocessing starting from pari-end fastq file through mapping to GRCh37 genome and processing for the follow up mosaic variant calling algorithms
 
-The pipeline is originally wirtten by Danny Antaki, and re-implemented by Xin Xu, Martin Breuss, and Xiaoxu Yang
+The pipeline originated from [this pipeline](https://github.com/shishenyxx/Adult_brain_somatic_mosaicism/tree/master/pipelines/WGS_processing_pipeline) and is reimplemented by Xiaoxu Yang
 
 ----------------------------
 
