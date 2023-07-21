@@ -1,0 +1,266 @@
+samples = glob_wildcards("../input/{sample}_R1.fastq.gz").sample
+reads = ['R1','R2']
+
+main = []
+main.append(samples[0])
+ucsc_regions = glob_wildcards("../resources/UCSC_regions/{bed}.bed").bed
+
+rule all:
+    input:
+        expand("../output/{sample}_bismark_bt2.deduplicated.bedGraph_UCSC.bedGraph",sample=samples),
+        "../output/methylation_per_gene.tsv",
+        expand("../output/qc/mosdepth/{sample}.mosdepth.summary.txt",sample=samples),
+        
+rule trim:
+    input:
+        "../input/{sample}_{read}.fastq.gz"
+    output:
+        "../scratch/trimmed/{sample}_{read}_trimmed.fq.gz"
+    params:
+        output="../scratch/trimmed/"
+    log:
+        "../logs/trim/{sample}_{read}.log"
+    conda:
+        "envs/trim.yaml"
+    resources:
+        walltime=72
+    threads: 1
+    shell:
+        "trim_galore {input} -o {params.output} 2> {log} && exit 0"
+
+rule combine:
+    input:
+        R1="../scratch/trimmed/{sample}_R1_trimmed.fq.gz",
+        R2="../scratch/trimmed/{sample}_R2_trimmed.fq.gz",
+    output:
+        "../scratch/combined/{sample}.fq.gz"
+    log:
+        "../logs/combine/{sample}.log"
+    resources:
+        walltime=48
+    threads: 1
+    shell:
+        "cat {input.R1} {input.R2} > {output} 2> {log}"
+
+rule gunzip_combined:
+    input:
+        "../scratch/combined/{sample}.fq.gz"
+    output:
+        "../scratch/combined/{sample}.fq"
+    log:
+        "../logs/combine/{sample}_gunzip.log"
+    resources:
+        walltime=48
+    threads: 1
+    shell:
+        "gunzip -c {input} > {output} 2> {log}"
+
+rule split:
+    input:
+        "../scratch/combined/{sample}.fq"
+    output:
+        os.path.abspath("../scratch/split/{sample}.fq"),
+    params:
+        n=50,
+        d=20
+    log:
+        "../logs/split/{sample}.log"
+    resources:
+        walltime=48
+    threads: 1
+    shell:
+        "python scripts/split.py -n {params.n} -d {params.d} -i {input} -o {output} 2> {log}"
+        
+rule bismark:
+    input:
+        genome=os.path.abspath("../resources/"),
+        fastq=os.path.abspath("../scratch/split/{sample}.fq")
+    output:
+        os.path.abspath("../scratch/bismark/{sample}/{sample}_bismark_bt2.bam")
+    params:
+        dir=directory("../scratch/bismark/{sample}/"),
+        parallel=4,
+        p=4,
+        score="L,0,-0.6"
+    log:
+        os.path.abspath("../logs/bismark/{sample}.log")
+    resources:
+        walltime=100
+    threads: 32
+    shell:
+        "cd {params.dir} && bismark --parallel {params.parallel} -p {params.p} "
+        "--score_min {params.score} "
+        "--genome {input.genome} {input.fastq} 2> {log} "
+
+rule deduplicate:
+    input:
+        os.path.abspath("../scratch/bismark/{sample}/{sample}_bismark_bt2.bam"),
+    output:
+        os.path.abspath("../scratch/bismark/{sample}/{sample}_bismark_bt2.deduplicated.bam"),
+    params:
+        dir=directory(os.path.abspath("../scratch/bismark/{sample}/")),
+    log:
+        os.path.abspath("../logs/bismark/{sample}_deduplicate.log")
+    resources:
+        walltime=16
+    threads: 16
+    shell:
+        "cd {params.dir} && deduplicate_bismark --bam {input} 2> {log}"
+
+rule extract_methylation:
+    input:
+        os.path.abspath("../scratch/bismark/{sample}/{sample}_bismark_bt2.deduplicated.bam"),
+    output:
+        "../scratch/bismark/{sample}/{sample}_bismark_bt2.deduplicated.bedGraph_UCSC.bedGraph.gz",
+        "../scratch/bismark/{sample}/{sample}_bismark_bt2.deduplicated.bismark.cov.gz"
+    params:
+        dir=directory(os.path.abspath("../scratch/bismark/{sample}/")),
+        parallel=4,
+        cutoff=5,
+    log:
+        os.path.abspath("../logs/bismark/{sample}_extract.log")
+    resources:
+        walltime=32
+    threads: 32
+    shell:
+        "cd {params.dir} && bismark_methylation_extractor --cutoff {params.cutoff} "
+        "--parallel {params.parallel} --gzip --ucsc --bedGraph {input} 2> {log}"
+
+rule copy_unzip_output:
+    input:
+        "../scratch/bismark/{sample}/{sample}_bismark_bt2.deduplicated.bedGraph_UCSC.bedGraph.gz",
+    output:
+        "../output/{sample}_bismark_bt2.deduplicated.bedGraph_UCSC.bedGraph",
+    log:
+        "../logs/copy_unzip/{sample}.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "gunzip -c {input} > {output} 2> {log}"
+
+main = []
+main.append(samples[0])
+ucsc_regions = glob_wildcards("../resources/UCSC_regions/{bed}.bed").bed
+
+rule remove_extra:
+    input:
+        "../output/{sample}_bismark_bt2.deduplicated.bedGraph_UCSC.bedGraph"
+    output:
+        "../scratch/no_extra/{sample}_no_extra.bedgraph"
+    log:
+        "../logs/no_extra/{sample}.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "egrep -v 'HLA|JTFH|Un|EBV|random|alt' {input} > {output} 2> {log}"
+
+rule ucsc_prep_per_bed:
+    input:
+        bedg = "../scratch/no_extra/{sample}_no_extra.bedgraph",
+        genes = "../resources/UCSC_regions/{ucsc_regions}.bed",
+    output:
+        "../output/UCSC/{sample}-{ucsc_regions}.bedgraph"
+    params:
+        name="{sample}",
+        visibility="full",
+        maxHeightPixels="100:32:8",
+        windowingFunction="mean",
+        smoothingWindow="16",
+    log:
+        "../logs/UCSC/{sample}-{ucsc_regions}.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "bedtools intersect -a {input.bedg} -b {input.genes} | "
+        "sed '1i track type=bedGraph name={params.name} visibility={params.visibility} "
+        "maxHeightPixels {params.maxHeightPixels} windowingFunction={params.windowingFunction} "
+        "smoothingWindow={params.smoothingWindow} windowingFunction={params.windowingFunction}' "
+        "> {output} 2> {log}"
+
+rule ucsc_prep_combine:
+    input:
+        expand("../output/UCSC/{sample}-{{ucsc_regions}}.bedgraph",sample=samples)
+    output:
+        "../output/UCSC_genes/{ucsc_regions}_combined.bedgraph"
+    log:
+        "../logs/combine/{ucsc_regions}.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "cat {input} > {output} 2> {log}"
+
+rule window:
+    input:
+        genes="../resources/all_genes.bed",
+        bedg="../scratch/no_extra/{sample}_no_extra.bedgraph",
+    output:
+        "../output/windowed/{sample}.bedgraph"
+    log:
+        "../logs/window/{sample}.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "bedtools map -a {input.genes} -b {input.bedg} -c 4 -o sum -null 0 "
+        "> {output} 2> {log}"
+
+rule merge_prep:
+    input:
+        "../output/windowed/{sample}.bedgraph"
+    output:
+        "../scratch/merge_prep/{sample}.txt"
+    log:
+        "../logs/merge_prep/{sample}.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "cut -d$'\t' -f 4 {input} > {output} 2> {log}"
+
+rule merge_prep_pos:
+    input:
+        expand("../output/windowed/{main}.bedgraph",main=main)
+    output:
+        "../scratch/merge_prep/pos.txt"
+    log:
+        "../logs/merge_prep/pos.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "cut -d$'\t' -f 1-3 {input} > {output} 2> {log}"
+
+rule merge:
+    input:
+        cols = expand("../scratch/merge_prep/{sample}.txt",sample=samples),
+        pos = "../scratch/merge_prep/pos.txt"
+    output:
+        "../output/merged.bedgraph"
+    params:
+        names='\t'.join(samples)
+    log:
+        "../logs/merge.log"
+    resources:
+        walltime=1
+    threads: 1
+    shell:
+        "paste {input.pos} {input.cols} | sed '1i chrom\tstart\tend\t{params.names}'  > {output} 2> {log}"
+        
+rule normalize:
+    input:
+        merged="../output/merged.bedgraph",
+        genes="../resources/all_genes_map.txt",
+    output:
+        "../output/methylation_per_gene.tsv",
+    log:
+        "../logs/normalize.log"
+    resources:
+        walltime=1
+    threads: 8
+    shell:
+        "python scripts/normalize.py -i {input.merged} -g {input.genes} -o {output} "
+        "--gl --tm --rg --rn 2> {log}"
