@@ -204,3 +204,6 @@ rule print_reads:
         "    -BQSR {input.recal_table} "
         "    -I {input.bam} "
         "    -o {output.bam} "
+
+
+
