@@ -1,0 +1,720 @@
+configfile: os.path.abspath("../config/config.yaml")
+
+import os
+import re
+from glob import glob
+from functools import partial
+from utils import get_options
+
+mem_mb = config["mem_mb"]
+
+# reference and annotation
+genome_build = config["genome_build"]
+
+reference_data = config["reference"][genome_build]
+fasta_file = os.path.abspath(reference_data["fasta"])
+fasta_dict = os.path.abspath(reference_data["dict"])
+rrna_interval = reference_data["rrna_interval"]
+annotation = os.path.abspath(reference_data["annotation"])
+annotation_name = os.path.splitext(os.path.basename(annotation))[0]
+annotation_prefix = os.path.abspath(annotation.split(".gtf")[0])
+singularity_path = os.path.abspath(config["singularity"])
+
+get_options = partial(get_options, config=config)
+
+
+def read_samples():
+    """Get all samples from ../input/"""
+    sample_regex = re.compile(os.path.abspath("../input/([a-zA-Z\d_-]+).R1.fastq.gz"))
+    samples = set()
+    for r1_fastq in glob(os.path.abspath("../input/*.R1.fastq.gz")):
+        m = sample_regex.match(r1_fastq)
+        if m:
+            samples.add(m.group(1))
+        else:
+            raise ValueError(
+                f"FASTQ found in input directory "
+                f"that doesn't match expected format: {r1_fastq}"
+            )
+    if samples:
+        return samples
+    else:
+        raise ValueError("Didn't find any samples in ../input.")
+
+
+samples = read_samples()
+
+
+def get_output_directory(wildcards, output):
+    """
+    Return the output directory for the rule.
+    """
+    return os.path.dirname(output[0])
+
+
+wildcard_constraints:
+    sample="[a-zA-Z\d_-]+",  # N.B. no "."
+    read="\d",  # read one, read two
+    filename="[^/]+",  # i.e. the file name without directory
+
+
+localrules:
+    all,
+    #rsem_combine,
+    #rsem_combine_fix_sample_names,
+    #rename_star_output,
+    #create_rrna_interval_file,
+    #genePredToRefFlat,
+    copy_resource_to_scratch,
+
+rule all:
+    input:
+        expand(
+            [
+                os.path.abspath("../output/fastqc/{sample}.R{read}.fastqc.html"),
+                os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam.bai"),
+                os.path.abspath("../output/picard/{sample}.mark_dup_metrics.txt"),
+                os.path.abspath("../output/picard/{sample}.rna_metrics.txt"),
+                os.path.abspath("../output/picard/{sample}.insert_size_metrics.txt"),
+                os.path.abspath("../output/picard/{sample}.alignment_summary_metrics.txt"),
+                os.path.abspath("../output/picard/{sample}.gc_metrics.txt"),
+                os.path.abspath("../output/featurecounts/{sample}.counts.txt"),
+                os.path.abspath("../output/qualimap/{sample}"),
+                os.path.abspath("../resources/STAR"),
+                os.path.abspath("../resources/rsem/reference.chrlist"),
+                os.path.abspath("../output/rsem/{sample}.Quant.rsem.genes.results"),
+            ],
+            sample=samples,
+            read=["1", "2"],
+        ),
+        os.path.abspath("../output/rsem/Quant.rsem.genes.matrix"),
+        os.path.abspath("../output/rsem/Quant.rsem.isoforms.matrix"),
+        os.path.abspath("../output/rsem/Quant.rsem.genes.matrix.tpm"),
+        os.path.abspath("../output/rsem/Quant.rsem.isoforms.matrix.tpm"),
+        os.path.abspath("../output/rsem/Quant.rsem.genes.matrix.fpkm"),
+        os.path.abspath("../output/rsem/Quant.rsem.isoforms.matrix.fpkm"),
+        os.path.abspath("../output/featurecounts/counts_matrix.txt"),
+
+
+rule gtftoGenePred:
+    """
+    Converts the GTF to UCSC genePred format for downstream usage.
+    https://genome.ucsc.edu/goldenPath/help/bigGenePred.html
+    """
+    input:
+        annotation,
+    output:
+        pipe(os.path.abspath(f"../resources/{annotation_name}.tmp")),
+    singularity:
+        singularity_path
+    params:
+        extra="-genePredExt -ignoreGroupsWithoutExons",
+    resources:
+        walltime=1,
+    log:
+        os.path.abspath("../logs/gtfToGenePred.log"),
+    shell:
+        "gtfToGenePred {params.extra} {input} {output} > {log}"
+
+
+rule genePredToRefFlat:
+    """
+    Converts the UCSC genePred file to refFlat format for downstream usage.
+    https://github.com/igordot/genomics/blob/f6b14e502fc8719f6a0235dcea738ddda2f93447/notes/converting-files.md?plain=1#L13
+    """
+    input:
+        os.path.abspath(f"../resources/{annotation_name}.tmp"),
+    output:
+        os.path.abspath(f"../resources/{annotation_name}.refFlat"),
+    singularity:
+        singularity_path,
+    resources:
+        walltime=1,
+    shell:
+        "cut -f 12,1-10 {input} > {output}"
+
+
+rule star_index:
+    """
+    Creates the genome index files that STAR will use for alignment.
+    https://github.com/alexdobin/STAR
+    """
+    input:
+        fasta=fasta_file,
+        gtf=annotation,
+    output:
+        directory(os.path.abspath("../resources/STAR")),
+    singularity:
+        singularity_path
+    params:
+        sjdb_overhang=100,
+    threads: 8
+    resources:
+        walltime=8,
+    log:
+        os.path.abspath("../logs/star_index.log"),
+    shell:
+        "STAR "
+        "--runThreadN {threads} "  # Number of threads
+        "--runMode genomeGenerate "  # Indexation mode
+        "--genomeFastaFiles {input.fasta} "  # Path to fasta files
+        "--sjdbOverhang {params.sjdb_overhang} "  # Read-len - 1
+        "--sjdbGTFfile {input.gtf} "  # Highly recommended GTF
+        "--genomeDir {output} "  # Path to output
+        "> {log}"  # Logging
+
+
+rule rsem_index:
+    """
+    Creates the genome index files that rsem will use for gene and transcript
+    quantification.
+    https://deweylab.github.io/RSEM/
+    """
+    input:
+        reference_genome=fasta_file,
+    output:
+        grp=os.path.abspath("../resources/rsem/reference.grp"),
+        ti=os.path.abspath("../resources/rsem/reference.ti"),
+        transcripts_fa=os.path.abspath("../resources/rsem/reference.transcripts.fa"),
+        seq=os.path.abspath("../resources/rsem/reference.seq"),
+        idx_fa=os.path.abspath("../resources/rsem/reference.idx.fa"),
+        n2g_idx_fa=os.path.abspath("../resources/rsem/reference.n2g.idx.fa"),
+        chrlist=os.path.abspath("../resources/rsem/reference.chrlist"),
+    singularity:
+        singularity_path
+    params:
+        extra=f"--gtf {annotation}",
+        seq=os.path.abspath("../resources/rsem/reference"),
+    resources:
+        walltime=8,
+    log:
+        os.path.abspath("../logs/rsem_index.log"),
+    shell:
+        "rsem-prepare-reference {params.extra} "
+        "{input.reference_genome} {params.seq} "
+        "> {log}"
+
+
+rule fastqc:
+    """
+    Generates a summary report of QC information for the given set of FASTQs.
+    https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+    """
+    input:
+        os.path.abspath("../input/{sample}.R{read}.fastq.gz"),
+    output:
+        html=os.path.abspath("../output/fastqc/{sample}.R{read}.fastqc.html"),
+        zip=os.path.abspath("../output/fastqc/{sample}.R{read}.fastqc.zip"),
+    params:
+        out=os.path.abspath("../output/fastqc/"),
+        html=os.path.abspath("../output/fastqc/{sample}.R{read}_fastqc.html"),
+        zip=os.path.abspath("../output/fastqc/{sample}.R{read}_fastqc.zip"),
+    singularity:
+        singularity_path
+    resources:
+        walltime=1,
+    log:
+        os.path.abspath("../logs/fastqc/{sample}_R{read}.log"),
+    shell:
+        "fastqc --outdir {params.out} {input} > {log} && "
+        "mv {params.html} {output.html} && "
+        "mv {params.zip} {output.zip}"
+
+
+rule cutadapt:
+    """
+    Trims the provided adapter sequences from the FASTQs.
+    STAR soft-clips low quality and non-mapping bases from the end of reads
+    anyway, so this step is probably unnecessary, but also shouldn't pose any
+    problems.
+    https://cutadapt.readthedocs.io/en/stable/guide.html
+    """
+    input:
+        [os.path.abspath("../input/{sample}.R1.fastq.gz"), os.path.abspath("../input/{sample}.R2.fastq.gz")],
+    output:
+        fastq1=os.path.abspath("../output/cutadapt/{sample}.R1.fastq.gz"),
+        fastq2=os.path.abspath("../output/cutadapt/{sample}.R2.fastq.gz"),
+        qc=os.path.abspath("../output/cutadapt/{sample}.qc.txt"),
+    singularity:
+        singularity_path
+    params:
+        adapters=config["cutadapt"]["adapters"],
+        extra=get_options("cutadapt", ignore=["adapters"]),
+    resources:
+        walltime=1,
+    log:
+        os.path.abspath("../logs/cutadapt/{sample}.log"),
+    shell:
+        "cutadapt {params.adapters} {params.extra} "
+        "-o {output.fastq1} "
+        "-p {output.fastq2} "
+        "{input} > {output.qc} 2> {log}"
+
+
+rule star:
+    """
+    Align the FASTQs with STAR to the reference genome and transcriptome.
+    https://github.com/alexdobin/STAR
+    """
+    input:
+        fq1=os.path.abspath("../output/cutadapt/{sample}.R1.fastq.gz"),
+        fq2=os.path.abspath("../output/cutadapt/{sample}.R2.fastq.gz"),
+        index=os.path.abspath("../resources/STAR"),  # this isn't actually used it's just to enforce the dependency on star_index
+    output:
+        os.path.abspath("../output/star/{sample}/Aligned.toTranscriptome.out.bam"),
+        os.path.abspath("../output/star/{sample}/Aligned.sortedByCoord.out.bam"),
+    singularity:
+        singularity_path
+    params:
+        index=os.path.abspath("../resources/STAR"),
+        extra=get_options("star"),
+        out=os.path.abspath("../output/star/{sample}/")
+    threads: 16  # jobs run out of memory with only 12
+    resources:
+        walltime=8,
+    log:
+        os.path.abspath("../logs/star/{sample}.log"),
+    shell:
+        "STAR {params.extra} "
+        "--runThreadN {threads} "  # Number of threads
+        "--genomeDir {params.index} "  # Path to output
+        "--readFilesIn {input.fq1} {input.fq2} "
+        "--readFilesCommand zcat "
+        "--outFileNamePrefix {params.out}/ "
+        "--outStd Log "
+        "> {log}"  # Logging
+
+
+rule rename_star_output:
+    """The star wrapper always puts output in its own directory with no sample prefix.
+    This just 1.adds the sample name as a prefix
+    2. creates a symlink for the original file pointing to the new name,
+    3. touches the new file
+    The latter two are done to placate snakemake.
+    """
+    input:
+        os.path.abspath("../output/star/{sample}/{filename}"),
+    output:
+        os.path.abspath("../output/star/{sample}/{sample}.{filename}"),
+    singularity:
+        singularity_path,
+    resources:
+        walltime=1,
+    shell:
+        "mv {input} {output} && ln -s {output} {input} && touch {output}"
+
+
+rule index_star_genome_bam:
+    """
+    STAR creates a BAM aligned to the genome and coordinate sorted, but does not
+    index it.  This does that.
+    http://www.htslib.org/doc/samtools-index.html
+    """
+    input:
+        os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+    output:
+        os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam.bai"),
+    singularity:
+        singularity_path
+    resources:
+        walltime=1,
+    shell:
+        "samtools index {input} {output}"
+
+
+rule rsem:
+    """
+    Quantifies with rsem the per-gene and per-transcript amounts using the STAR
+    transcriptome-aligned BAM.
+    https://deweylab.github.io/RSEM/
+    """
+    input:
+        bam=os.path.abspath("../output/star/{sample}/{sample}.Aligned.toTranscriptome.out.bam"),
+        reference=os.path.abspath("../resources/rsem/reference.chrlist"),
+    output:
+        genes_results=os.path.abspath("../output/rsem/{sample}.Quant.rsem.genes.results"),
+        isoforms_results=os.path.abspath("../output/rsem/{sample}.Quant.rsem.isoforms.results"),
+    singularity:
+        singularity_path
+    params:
+        paired_end=True,
+        extra=get_options("rsem"),
+        out=os.path.abspath("../output/rsem/{sample}.Quant.rsem"),
+        ref=os.path.abspath("../resources/rsem/reference"),
+    threads: 8
+    resources:
+        walltime=8,
+    log:
+        os.path.abspath("../logs/rsem/{sample}.log"),
+    shell:
+        "rsem-calculate-expression --num-threads {threads} {params.extra} "
+        "--paired-end --bam {input.bam} {params.ref} {params.out} > {log}"
+
+
+rule rsem_combine:
+    """
+    Merges single sample rsem results into a matrix containing results for all samples.
+    https://deweylab.github.io/RSEM/
+    """
+    input:
+        sorted(expand(
+            os.path.abspath("../output/rsem/{sample}.Quant.rsem.{{result_type}}.results"),
+            sample=samples,
+        )),
+    output:
+        os.path.abspath("../scratch/rsem/Quant.rsem.{result_type}.matrix"),
+    singularity:
+        singularity_path
+    resources:
+        walltime=1,
+    log:
+        os.path.abspath("../logs/rsem/combine_{result_type}.log"),
+    shell:
+        "rsem-generate-data-matrix {input} > {output} 2> {log}"
+
+
+rule rsem_combine_fix_sample_names:
+    """
+    rsem-generate-data-matrix labels each column with the name of the file passed in.
+    Here we replace this with the sample name instead.
+    https://deweylab.github.io/RSEM/
+    """
+    input:
+        os.path.abspath("../scratch/rsem/Quant.rsem.{result_type}.matrix"),
+    output:
+        os.path.abspath("../output/rsem/Quant.rsem.{result_type}.matrix"),
+    singularity:
+        singularity_path
+    params:
+        header="\t" + "\t".join(['"{}"'.format(sample) for sample in sorted(samples)]),
+    resources:
+        walltime=1,
+    shell:
+        'sed "1s/.*/{params.header}/" {input} > {output}'
+
+rule rsem_combine_tpm:
+    """
+    Modification of rsem_combine
+    """
+    input:
+        sorted(expand(
+            os.path.abspath("../output/rsem/{sample}.Quant.rsem.{{result_type}}.results"),
+            sample=samples,
+        )),
+    output:
+        os.path.abspath("../scratch/rsem/Quant.rsem.{result_type}.matrix.tpm"),
+    singularity:
+        singularity_path
+    resources:
+        walltime=1,
+    log:
+        os.path.abspath("../logs/rsem/combine_{result_type}.log"),
+    shell:
+        "rsem-generate-data-matrix-tpm {input} > {output} 2> {log}"
+
+
+rule rsem_combine_fix_sample_names_tpm:
+    """
+    Modification of rsem_combine_fix_sample_names
+    """
+    input:
+        os.path.abspath("../scratch/rsem/Quant.rsem.{result_type}.matrix.tpm"),
+    output:
+        os.path.abspath("../output/rsem/Quant.rsem.{result_type}.matrix.tpm"),
+    singularity:
+        singularity_path
+    params:
+        header="\t" + "\t".join(['"{}"'.format(sample) for sample in sorted(samples)]),
+    resources:
+        walltime=1,
+    shell:
+        'sed "1s/.*/{params.header}/" {input} > {output}'
+
+rule rsem_combine_fpkm:
+    """
+    Modification of rsem_combine
+    """
+    input:
+        sorted(expand(
+            os.path.abspath("../output/rsem/{sample}.Quant.rsem.{{result_type}}.results"),
+            sample=samples,
+        )),
+    output:
+        os.path.abspath("../scratch/rsem/Quant.rsem.{result_type}.matrix.fpkm"),
+    singularity:
+        singularity_path
+    resources:
+        walltime=1,
+    log:
+        os.path.abspath("../logs/rsem/combine_{result_type}.log"),
+    shell:
+        "rsem-generate-data-matrix-fpkm {input} > {output} 2> {log}"
+
+
+rule rsem_combine_fix_sample_names_fpkm:
+    """
+    Modification of rsem_combine_fix_sample_names
+    """
+    input:
+        os.path.abspath("../scratch/rsem/Quant.rsem.{result_type}.matrix.fpkm"),
+    output:
+        os.path.abspath("../output/rsem/Quant.rsem.{result_type}.matrix.fpkm"),
+    singularity:
+        singularity_path
+    params:
+        header="\t" + "\t".join(['"{}"'.format(sample) for sample in sorted(samples)]),
+    resources:
+        walltime=1,
+    shell:
+        'sed "1s/.*/{params.header}/" {input} > {output}'
+
+
+rule mark_duplicates:
+    """
+    Mark PCR duplicates on the genome-aligned BAM.
+    https://broadinstitute.github.io/picard/command-line-overview.html#MarkDuplicates
+    """
+    input:
+        os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+    output:
+        bam=os.path.abspath("../output/picard/{sample}.marked_duplicates.bam"),
+        metrics=os.path.abspath("../output/picard/{sample}.mark_dup_metrics.txt"),
+    singularity:
+        singularity_path
+    log:
+        os.path.abspath("../logs/mark_duplicates/{sample}.log"),
+    resources:
+        mem_mb=mem_mb,
+        walltime=8,
+    shell:
+        "picard MarkDuplicates INPUT={input} OUTPUT={output.bam} "
+        "METRICS_FILE={output.metrics} > {log}"
+
+
+rule create_sequence_dictionary:
+    """
+    Creates the reference genome sequence dictionary which is used by some
+    picard tools.
+    https://gatk.broadinstitute.org/hc/en-us/articles/360037068312-CreateSequenceDictionary-Picard-
+    """
+    input:
+        fasta_file,
+    output:
+        fasta_dict,
+    singularity:
+        singularity_path
+    resources:
+        walltime=1,
+    shell:
+        "picard CreateSequenceDictionary R={input} O={output}"
+
+
+rule create_rrna_interval_file:
+    """
+    Creates the rRNA interval file as required by picard CollectRNASeqMetrics.
+    https://www.biostars.org/p/120145/#120190
+    """
+    input:
+        dict=fasta_dict,
+        gtf=annotation,
+    output:
+        rrna_interval,
+    singularity:
+        singularity_path,
+    resources:
+        walltime=1,
+    shell:
+        "cat {input.dict} > {output} && cut -s -f 1,4,5,7,9 {input.gtf} >> {output}"
+
+
+rule collect_rna_seq_metrics:
+    """
+    Generates a summary report detailing some RNA-seq QC metrics.
+    https://gatk.broadinstitute.org/hc/en-us/articles/360037057492-CollectRnaSeqMetrics-Picard-
+    """
+    input:
+        bam=os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+        refflat=f"{annotation_prefix}.refFlat",
+        rrna=rrna_interval,
+    output:
+        os.path.abspath("../output/picard/{sample}.rna_metrics.txt"),
+    singularity:
+        singularity_path
+    params:
+        strand="SECOND_READ_TRANSCRIPTION_STRAND",
+        extra=get_options("collectrnaseqmetrics", prefix="", separator="="),
+    resources:
+        mem_mb=mem_mb,
+        walltime=8,
+    log:
+        os.path.abspath("../logs/collect_rna_seq_metrics/{sample}.log"),
+    shell:
+        "picard CollectRnaSeqMetrics {params.extra} "
+        "INPUT={input.bam} OUTPUT={output} REF_FLAT={input.refflat} "
+        "STRAND_SPECIFICITY={params.strand} > {log}"
+
+
+rule collect_insert_size_metrics:
+    """
+    Generates a summary report detailing the distribution of insert sizes from
+    the aligned reads.  May be helpful in diagnosing library processing
+    problems.
+    https://gatk.broadinstitute.org/hc/en-us/articles/360037055772-CollectInsertSizeMetrics-Picard-
+    """
+    input:
+        os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+    output:
+        txt=os.path.abspath("../output/picard/{sample}.insert_size_metrics.txt"),
+        pdf=os.path.abspath("../output/picard/{sample}.insert_size_histogram.pdf"),
+    singularity:
+        singularity_path
+    resources:
+        mem_mb=mem_mb,
+        walltime=8,
+    log:
+        os.path.abspath("../logs/collect_insert_size_metrics/{sample}.log"),
+    shell:
+        "picard CollectInsertSizeMetrics "
+        "INPUT={input} OUTPUT={output.txt} "
+        "HISTOGRAM_FILE={output.pdf} > {log}"
+
+
+rule collect_alignment_summary_metrics:
+    """
+    Generates a report of alignment metrics for QC from the genome-aligned BAM.
+    https://gatk.broadinstitute.org/hc/en-us/articles/360056968512-CollectAlignmentSummaryMetrics-Picard-
+    """
+    input:
+        bam=os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+        ref=fasta_file,
+    output:
+        os.path.abspath("../output/picard/{sample}.alignment_summary_metrics.txt"),
+    singularity:
+        singularity_path
+    resources:
+        mem_mb=mem_mb,
+        walltime=8,
+    log:
+        os.path.abspath("../logs/collect_alignment_summary_metrics/{sample}.log"),
+    shell:
+        "picard CollectAlignmentSummaryMetrics "
+        "INPUT={input.bam} OUTPUT={output} "
+        "REFERENCE_SEQUENCE={input.ref} > {log}"
+
+
+rule collect_gc_bias_metrics:
+    """
+    Generates a report indicating the extent of GC bias in the alignments.
+    https://gatk.broadinstitute.org/hc/en-us/articles/360036801531-CollectGcBiasMetrics-Picard-
+    """
+    input:
+        bam=os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+        ref=fasta_file,
+    output:
+        metrics=os.path.abspath("../output/picard/{sample}.gc_metrics.txt"),
+        chart=os.path.abspath("../output/picard/{sample}.gc_metrics.pdf"),
+        summary=os.path.abspath("../output/picard/{sample}.gc_summary_metrics.txt"),
+    singularity:
+        singularity_path
+    resources:
+        mem_mb=mem_mb,
+        walltime=8,
+    log:
+        os.path.abspath("../logs/collect_gc_bias_metrics/{sample}.log"),
+    shell:
+        "picard CollectGcBiasMetrics INPUT={input.bam} "
+        "OUTPUT={output.metrics} CHART={output.chart} "
+        "SUMMARY_OUTPUT={output.summary} REFERENCE_SEQUENCE={input.ref} > {log}"
+
+
+rule featurecounts_matrix:
+    """
+    Counts all reads overlapping the features in the GTF for all samples.
+    http://subread.sourceforge.net/featureCounts.html
+    """
+    input:
+        sam=[
+            sorted(expand(
+                os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+                sample=samples,
+            ))
+        ],
+        annotation=annotation,
+    output:
+        os.path.abspath("../output/featurecounts/counts_matrix.txt"),
+    singularity:
+        singularity_path
+    params:
+        tmp_dir="$TMPDIR",
+        extra=get_options("featureCounts", prefix="-"),
+    threads: 8
+    resources:
+        walltime=8,
+    log:
+        os.path.abspath("../logs/featurecounts/featurecounts_matrix.log"),
+    shell:
+        "featureCounts {params.extra} --tmpDir {params.tmp_dir} -T {threads} "
+        "-J -a {input.annotation} -o {output} {input.sam} > {log}"
+
+
+rule featurecounts:
+    """
+    Counts all reads overlapping the features in the GTF for a sample.
+    http://subread.sourceforge.net/featureCounts.html
+    """
+    input:
+        sam=os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+        annotation=annotation,
+    output:
+        os.path.abspath("../output/featurecounts/{sample}.counts.txt"),
+    singularity:
+        singularity_path
+    params:
+        tmp_dir="$TMPDIR",
+        extra=get_options("featureCounts", prefix="-"),
+    threads: 8
+    resources:
+        walltime=8,
+    log:
+        os.path.abspath("../logs/featurecounts/{sample}.log"),
+    shell:
+         "featureCounts {params.extra} --tmpDir {params.tmp_dir} -T {threads} "
+         "-J -a {input.annotation} -o {output} {input.sam} > {log}"
+
+
+rule qualimap:
+    """
+    Generates an HTML report of alignment QC information from the genome-aligned BAM.
+    http://qualimap.conesalab.org/
+    """
+    input:
+        bam=os.path.abspath("../output/star/{sample}/{sample}.Aligned.sortedByCoord.out.bam"),
+        gtf=annotation,
+    output:
+        directory(os.path.abspath("../output/qualimap/{sample}")),
+    singularity:
+        singularity_path,
+    params:
+        java_opts=f"-Xmx{mem_mb}M -Djava.io.tmpdir=$TMPDIR", # + shared_tmpdir,
+        extra=get_options("qualimap", prefix="-"),
+    log:
+        os.path.abspath("../logs/qualimap/{sample}.log"),
+    shell:
+        "JAVA_OPTS=\"{params.java_opts}\" qualimap rnaseq {params.extra} "
+        "-bam {input.bam} -gtf {input.gtf} -outdir {output} > {log}"
+
+
+rule copy_resource_to_scratch:
+    """
+    Copy a file from projects storage to scratch for use in the pipeline.
+    """
+    input:
+        f"{config['resources_repository']}/{genome_build}/{{resource}}",
+    output:
+        os.path.abspath("../resources/{resource}"),
+    params:
+        output_directory=get_output_directory,
+    resources:
+        walltime=1,
+    shell:
+        "rsync -L {input}* {params.output_directory}"
