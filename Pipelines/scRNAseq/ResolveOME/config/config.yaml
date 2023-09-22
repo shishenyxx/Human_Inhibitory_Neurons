@@ -1,0 +1,63 @@
+genome_build: hg38
+mem_mb: 3000 # use up to 3G for JVM
+singularity: /projects/ps-gleesonlab8/Pipelines/singularity/RNAseq/RNAseq_tpm_fpkm.sif
+
+#REFERENCE FILES
+reference: 
+  hg38:
+    fasta: ../resources/GRCh38.primary_assembly.genome.fa
+    dict: ../resources/GRCh38.primary_assembly.genome.dict
+    rrna_interval: &rrna_hg38 ../resources/rRNA_interval.txt
+    annotation: &annotation_hg38 ../resources/gencode.v27.annotation.gtf
+
+  grcm38:
+    fasta: ../resources/Mus_musculus.GRCm38.dna.primary_assembly.fa
+    dict: ../resources/Mus_musculus.GRCm38.dna.primary_assembly.dict
+    rrna_interval: &rrna_grcm38 ../resources/Mus_musculus.GRCm38.98.rRNA_interval.txt
+    annotation: &annotation_grcm38 ../resources/Mus_musculus.GRCm38.98.gtf
+
+resources_repository: /projects/ps-gleesonlab7/gleeson3/resources
+
+# program parameters - don't change without good reason
+cutadapt:
+  adapters: -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+  quality-cutoff: 20
+  minimum-length: 50
+
+featureCounts:
+  ? p # fragments counted instead of reads
+  ? C # don't count chimeric alignments
+  s: 2 # reverse strand library prep
+
+collectrnaseqmetrics:
+  RIBOSOMAL_INTERVALS: *rrna_hg38
+
+qualimap:
+  p: strand-specific-reverse # reverse strand library prep
+  ? pe # paired-end; counts fragments instead of reads
+
+rsem:
+  ? paired-end # True; this is just a flag
+  ? estimate-rspd
+  ? no-bam-output
+  seed: 12345
+  forward-prob: 0
+
+star:
+  sjdbOverhang: 100
+  twopassMode: Basic
+  outFilterType: BySJout
+  outFilterMultimapNmax: 20
+  alignSJoverhangMin: 8
+  alignSJDBoverhangMin: 1
+  outFilterMismatchNmax: 999
+  outFilterMismatchNoverReadLmax: 0.04
+  alignIntronMin: 20
+  alignIntronMax: 1000000
+  alignMatesGapMax: 1000000
+  outSAMunmapped: Within
+  outSAMattributes: NH HI AS NM MD
+  outSAMtype: BAM SortedByCoordinate
+  quantMode: GeneCounts TranscriptomeSAM
+  limitBAMsortRAM: 20000000000
+  sjdbGTFfile: *annotation_hg38
