@@ -23,7 +23,7 @@ Variants were further combined and annotations were performed using [this pipeli
 
 #### 1.3 Pipelines for single nucleus transcriptome sequencing analysis
 
-Single nucleus transcriptome sequencing analysis with ResolvOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/scRNAseq/ResolveOME).
+Single nucleus transcriptome sequencing analysis with ResolveOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/scRNAseq/ResolveOME).
 
 Single nucleus transcriptome sequencing analysis with 10x Genomics RNA seq pipeline is provided in this repository.
      
