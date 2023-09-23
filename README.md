@@ -20,6 +20,12 @@ Sample-specific variant calling is first carried with [this pipeline](https://gi
 Sample-unique and sample-specific variants are further called without control using MosaicHunter following [this pipeline](https://github.com/shishenyxx/Adult_brain_somatic_mosaicism/tree/master/pipelines/WGS_SNV_indel_calling_pipeline/MosaicHunter_single_mode_pipeline) and the 300x properties file.
 
 Variants were further combined and annotations were performed using [this pipeline](https://github.com/shishenyxx/PASM/tree/master/Snakemake_pipeline). 
+
+#### 1.3 Pipelines for single nucleus transcriptome sequencing analysis
+
+Single nucleus transcriptome sequencing analysis with ResolvOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/scRNAseq/ResolveOME).
+
+Single nucleus transcriptome sequencing analysis with 10x Genomics RNA seq pipeline is provided in this repository.
      
 -----------------------------------
 
