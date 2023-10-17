@@ -1,5 +1,5 @@
-# Human_Interneuron
-This repository contains codes and pipelines for the analysis of human interneuron migration study and clonal distribution project.
+# Human Inhibitory Neuron
+This repository contains codes and pipelines for the analysis of the study of human Inhibitory and excitatory neuronal clonal dynamics and lineage relationship.
 
 -----------------------------------
 
