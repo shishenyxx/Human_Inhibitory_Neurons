@@ -7,7 +7,7 @@ This repository contains codes and pipelines for the analysis of the study of hu
 
 #### 1.1 Pipelines for WGS data process
 
-WGS data processing is following [this pipeline](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/Alignment).
+WGS data processing is following [this pipeline](https://github.com/shishenyxx/Human_Inhibitory_Neurons/tree/main/Pipelines/Alignment).
 
 Germline heterozygous variants are called with HaplotypeCaller following [this pipeline](https://github.com/shishenyxx/Sperm_control_cohort_mosaicism/tree/master/Pipelines/Preprocessing/Haplocaller).
 
@@ -23,9 +23,9 @@ Variants were further combined and annotations were performed using [this pipeli
 
 #### 1.3 Pipelines for single nucleus transcriptome sequencing analysis
 
-Single nucleus transcriptome sequencing analysis with ResolveOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/scRNAseq/ResolveOME).
+Single nucleus transcriptome sequencing analysis with ResolveOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/tree/main/Pipelines/scRNAseq/ResolveOME).
 
-Single nucleus transcriptome sequencing analysis with 10x Genomics RNA seq pipeline is provided in this repository.
+Single nucleus transcriptome sequencing analysis with a 10x Genomics RNA seq pipeline is provided in this repository.
      
 -----------------------------------
 
@@ -43,17 +43,17 @@ After alignment, candidate variants were further combined and genotyped using [t
 
 ### 3. Identification the cell types by using whole-genome bisulfite sequencing analysis
 
-#### 3.1 [Pipelines](https://github.com/shishenyxx/Human_Interneuron/tree/main/Pipelines/Methylome) for methylome analysis using BisMark
+#### 3.1 [Pipelines](https://github.com/shishenyxx/Human_Inhibitory_Neurons/tree/main/Pipelines/Methylome) for methylome analysis using BisMark
 
-#### 3.2 [Statical analysis](https://github.com/shishenyxx/Human_Interneuron/blob/main/Methylome/plots/Human_Interneuron_Methylome_Plots.ipynb) combining published standards to identify the cell types
+#### 3.2 [Statical analysis](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Methylome/plots/Human_Interneuron_Methylome_Plots.ipynb) combining published standards to identify the cell types
 
 -----------------------------------
 
-### 4. Computational and statistical analyses for interneuron clonal distribution patterns
+### 4. Computational and statistical analyses for human neuronal clonal distribution patterns
 
 #### 4.1 Pipelines for mosaic variant determination, annotations, and plotting
 
-#### 4.2 Pipelines for statistically analysis, and the related plotting
+#### 4.2 Pipelines for statistical analysis, and the related plotting
 
 -----------------------------------
 
