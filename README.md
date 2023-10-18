@@ -1,5 +1,5 @@
 # Human Inhibitory Neuron
-This repository contains codes and pipelines for the analysis of the study of human Inhibitory and excitatory neuronal clonal dynamics and lineage relationship.
+This repository contains codes and pipelines, as well as data used in the analysis of human inhibitory and excitatory neuronal clonal dynamics and lineage relationships, with cell-type-specific mosaic variant barcoding analysis (cMVBA). 
 
 -----------------------------------
 
