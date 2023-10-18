@@ -26,6 +26,8 @@ Variants were further combined and annotations were performed using [this pipeli
 Single nucleus transcriptome sequencing analysis with ResolveOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/tree/main/Pipelines/scRNAseq/ResolveOME).
 
 Single nucleus transcriptome sequencing analysis with a 10x Genomics RNA seq pipeline is provided in this repository.
+
+Cell identity was determined as described [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Bioskryb/Bioskryb_celltype_identificationV2.ipynb).
      
 -----------------------------------
 
@@ -38,6 +40,9 @@ Alignment and processing of MPAS and snMPAS were carried out following [this pip
 #### 2.2 Pipelines for AF quantification and variant annotations
 
 After alignment, candidate variants were further combined and genotyped using [this pipeline](https://github.com/shishenyxx/PASM/tree/master/Snakemake_pipeline) in every sample detected with MPAS and snMPAS. 
+
+Quality control were carried out for WGS and MPAS MAFs measured in [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/7614_interneuron_Ampliseq_QC_Rscript-Copy1.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/20230101_QC/7669_interneuron_Ampliseq_QC_Rscript.ipynb).
+
 
 -----------------------------------
 
@@ -53,7 +58,19 @@ After alignment, candidate variants were further combined and genotyped using [t
 
 #### 4.1 Pipelines for mosaic variant determination, annotations, and plotting
 
+Variant annotation for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/annotation/7614_Ampliseq_Annotation.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/20230105_annotation/7669_Ampliseq_Annotation.ipynb) are provided separately.
+
+UpSet plot for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/variant_annotation/7614_Upset_plot.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/variant_annotation/7669_upset_plot.ipynb) variants.
+
 #### 4.2 Pipelines for statistical analysis, and the related plotting
+
+Correlation analysis for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_var_by_var_corr_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_var_by_var_corr_umap.ipynb) as well as [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lobe/7669_R_P_1to17_varxsample_heatmap-Copy1.ipynb).
+
+Bootstrap, and AF heatmap for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_variant_by_sample_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_variant_by_sample_heatmap.ipynb).
+
+Lolliplot and geoclones for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Rolliplot/7614_lolliplot.ipynb); [ID05 lollipolt](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lolliplot/7669_lolliplot.ipynb) and [geoclones](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_geoclones.ipynb).
+
+UMAP for variant AF for [ID01](umaphttps://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_variant_by_sample_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/UMAP/7669_UMAP-Copy1.ipynb).
 
 -----------------------------------
 
