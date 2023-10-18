@@ -66,6 +66,10 @@ UpSet plot for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blo
 
 Single-nucleus RNA sequencing results for [cell type identification of sorted nuclei](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230913_Changuk_10X_interneuron_IGM/Cell_type_identification_for_sorted_nuclei.ipynb)
 
+Number of MVs categorized by location detected in each donor [ID01](Analyses/20230114_7614_Ampliseq_QC/variant_annotation/7614_variant_annotation.ipynb) or [ID05](Analyses/20221223_7669_Ampliseq_QC/variant_annotation/7669_variant_annotation.ipynb)
+
+Heatmaps, dendrograms, and contour plots with kernel density estimation plots for strong Hippocampal lineage restriction: [ID01](Analyses/20230114_7614_Ampliseq_QC/CTX_BG_HIP/7614_CTX_BG_HIP.ipynb), [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/CTX_BG_HIP/7669_CTX_BG_HIP.ipynb)
+
 Correlation analysis for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_var_by_var_corr_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_var_by_var_corr_umap.ipynb) as well as [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lobe/7669_R_P_1to17_varxsample_heatmap-Copy1.ipynb).
 
 Bootstrap, and AF heatmap for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_variant_by_sample_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_variant_by_sample_heatmap.ipynb).
