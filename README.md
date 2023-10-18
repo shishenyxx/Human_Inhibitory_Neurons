@@ -25,7 +25,7 @@ Variants were further combined and annotations were performed using [this pipeli
 
 Single nucleus transcriptome sequencing analysis with ResolveOME RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/tree/main/Pipelines/scRNAseq/ResolveOME).
 
-Single nucleus transcriptome sequencing analysis with a 10x Genomics RNA seq pipeline is provided in this repository.
+Single nucleus transcriptome sequencing analysis with a 10x Genomics RNA seq pipeline is provided [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Bioskryb/Bioskryb_celltype_identificationV2_with_ref-Copy1.ipynb).
 
 Cell identity was determined as described [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Bioskryb/Bioskryb_celltype_identificationV2.ipynb).
      
