@@ -1,0 +1,23 @@
+Hugo_Symbol	Entrez_Gene_Id	Center	NCBI_Build	Chromosome	Start_Position	End_Position	Strand	Variant_Classification	Variant_Type	Reference_Allele	Tumor_Seq_Allele1	Tumor_Seq_Allele2	dbSNP_RS	dbSNP_Val_Status	Tumor_Sample_Barcode	Matched_Norm_Sample_Barcode	Match_Norm_Seq_Allele1	Match_Norm_Seq_Allele2
+20-24978911-G-A	.	.	hg19	20	24978911	24978911	+	Missense_Mutation	SNP	G	G	A			Frontal-DNA-SC04	Frontal-DNA-SC04	G	G
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Frontal-DNA-SC10	Frontal-DNA-SC10	C	C
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Frontal-DNA-SC24	Frontal-DNA-SC24	C	C
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Frontal-DNA-SC32	Frontal-DNA-SC32	C	C
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Frontal-DNA-SC37	Frontal-DNA-SC37	C	C
+6-156792200-G-A	.	.	hg19	6	156792200	156792200	+	Missense_Mutation	SNP	G	G	A			Frontal-DNA-SC69	Frontal-DNA-SC69	G	G
+6-156792200-G-A	.	.	hg19	6	156792200	156792200	+	Missense_Mutation	SNP	G	G	A			Frontal-DNA-SC91	Frontal-DNA-SC91	G	G
+21-28769343-G-A	.	.	hg19	21	28769343	28769343	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC07	Temporal-DNA-SC07	G	G
+20-24978911-G-A	.	.	hg19	20	24978911	24978911	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC24	Temporal-DNA-SC24	G	G
+21-28769343-G-A	.	.	hg19	21	28769343	28769343	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC28	Temporal-DNA-SC28	G	G
+21-28769343-G-A	.	.	hg19	21	28769343	28769343	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC36	Temporal-DNA-SC36	G	G
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Temporal-DNA-SC53	Temporal-DNA-SC53	C	C
+21-28769343-G-A	.	.	hg19	21	28769343	28769343	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC54	Temporal-DNA-SC54	G	G
+13-46288201-G-A	.	.	hg19	13	46288201	46288201	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC73	Temporal-DNA-SC73	G	G
+13-46288201-G-A	.	.	hg19	13	46288201	46288201	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC80	Temporal-DNA-SC80	G	G
+21-28769343-G-A	.	.	hg19	21	28769343	28769343	+	Missense_Mutation	SNP	G	G	A			Temporal-DNA-SC89	Temporal-DNA-SC89	G	G
+6-1661827-C-T	.	.	hg19	6	1661827	1661827	+	Missense_Mutation	SNP	C	C	T			Temporal-DNA-SC90	Temporal-DNA-SC90	C	C
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Hippocampus-DNA-SC28	Hippocampus-DNA-SC28	C	C
+13-46288201-G-A	.	.	hg19	13	46288201	46288201	+	Missense_Mutation	SNP	G	G	A			Hippocampus-DNA-SC43	Hippocampus-DNA-SC43	G	G
+8-66303042-C-T	.	.	hg19	8	66303042	66303042	+	Missense_Mutation	SNP	C	C	T			Hippocampus-DNA-SC44	Hippocampus-DNA-SC44	C	C
+21-28769343-G-A	.	.	hg19	21	28769343	28769343	+	Missense_Mutation	SNP	G	G	A			Hippocampus-DNA-SC69	Hippocampus-DNA-SC69	G	G
+6-1661827-C-T	.	.	hg19	6	1661827	1661827	+	Missense_Mutation	SNP	C	C	T			Hippocampus-DNA-SC71	Hippocampus-DNA-SC71	C	C

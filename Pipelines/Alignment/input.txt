@@ -1,2 +1,3 @@
-#UNIQ_ID	SAMPLE_ID	FASTQ1_PATH	FASTQ2_PATH
-#ID_for_the_specific_library	ID_for_the_sample_combined_by_different_libraries	PATH_to_FASTQ1_file	PATH_to_FASTQ2_file
+version https://git-lfs.github.com/spec/v1
+oid sha256:8de87369333f9b2caaa4eed2b982d36cbd232e5751556522395e8ed1d37b6bd3
+size 162
