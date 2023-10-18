@@ -78,7 +78,7 @@ Pearson correlation analysis for [ID01](https://github.com/shishenyxx/Human_Inhi
 
 Lolliplot and geoclones for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Rolliplot/7614_lolliplot.ipynb); [ID05 lollipolt](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lolliplot/7669_lolliplot.ipynb) and [geoclones](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_geoclones.ipynb).
 
-UMAP for variant AF for [ID01](umaphttps://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_variant_by_sample_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/UMAP/7669_UMAP-Copy1.ipynb).
+UMAP for variant AF for [ID01](Analyses/20230114_7614_Ampliseq_QC/UMAP/7614_UMAP.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/UMAP/7669_UMAP-Copy1.ipynb).
 
 -----------------------------------
 
