@@ -74,7 +74,7 @@ Fig.4 ResolveOME analysis: [Cell type identification](Analyses/20221223_7669_Amp
 
 Fig.5 AF Heatmap, dendrogram, contour plots with kernel density estimation plots for restricted clonal spread in a parietal lobe of ID05 is [here](Analyses/20221223_7669_Ampliseq_QC/Lobe/7669_R_P_1to17_varxsample_heatmap.ipynb)
 
-Pearson correlation analysis for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_var_by_var_corr_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_var_by_var_corr_umap.ipynb) as well as [here](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lobe/7669_R_P_1to17_varxsample_heatmap-Copy1.ipynb).
+Pearson correlation analysis for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_var_by_var_corr_heatmap.ipynb) and [ID05](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_var_by_var_corr_umap.ipynb)
 
 Lolliplot and geoclones for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Rolliplot/7614_lolliplot.ipynb); [ID05 lollipolt](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lolliplot/7669_lolliplot.ipynb) and [geoclones](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_geoclones.ipynb).
 
