@@ -70,7 +70,7 @@ Fig.2 Heatmaps, dendrograms, and contour plots with kernel density estimation pl
 
 Fig.3 Bootstraps, AF Heatmaps and dendrograms and for sorted cortical excitatory and inhibitory neuronal pools: [ID01](Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_variant_by_sample_heatmap.ipynb), [ID05](Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_variant_by_sample_heatmap.ipynb)
 
-Fig.4 ResolveOME analysis: [Cell type identification](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/Bioskryb_celltype_identificationV2_with_ref.ipynb), [oncoplot](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/DNA2/ResolveOME_DNA2_3_oncoplot.ipynb), [Peudobulk analysis](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/DNA2/ResolveOME_DNA2_4_pseudobulk.ipynb), [Permutation test](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/DNA2/ResolveOME_DNA2_6_permutation.ipynb)
+Fig.4 ResolveOME analysis: [Cell type identification](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/Bioskryb_celltype_identificationV2_with_ref.ipynb), [oncoplot](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/DNA2/ResolveOME_DNA2_3_oncoplot.ipynb), [Peudobulk analysis](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/DNA2/ResolveOME_DNA2_4_pseudobulk.ipynb), [Permutation test](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/DNA2/ResolveOME_DNA2_6_permutation.ipynb), [DEG analysis between InN1 and InN2](Analyses/20221223_7669_Ampliseq_QC/Bioskryb/Asterisk_Marked_InN_DEG.csv)
 
 Fig.5 AF Heatmap, dendrogram, contour plots with kernel density estimation plots for restricted clonal spread in a parietal lobe of ID05 is [here](Analyses/20221223_7669_Ampliseq_QC/Lobe/7669_R_P_1to17_varxsample_heatmap.ipynb)
 
