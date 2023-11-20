@@ -93,3 +93,4 @@ UMAP for variant AF for [ID01](Analyses/20230114_7614_Ampliseq_QC/UMAP/7614_UMAP
 -----------------------------------
 
 ### 6. Cite the data and codes:
+Chung C, Yang X, et al., Gleeson JG. Cell-type-resolved somatic mosaicism reveals clonal dynamics of the human forebrain. 2023. ([bioRxiv, DOI:10.1101/2023.10.24.563814](https://www.biorxiv.org/content/10.1101/2023.10.24.563814v2.full))
