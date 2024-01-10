@@ -79,6 +79,8 @@ Pearson correlation analysis for [ID01](https://github.com/shishenyxx/Human_Inhi
 Lolliplot and geoclones for [ID01](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20230114_7614_Ampliseq_QC/Rolliplot/7614_lolliplot.ipynb); [ID05 lollipolt](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Lolliplot/7669_lolliplot.ipynb) and [geoclones](https://github.com/shishenyxx/Human_Inhibitory_Neurons/blob/main/Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_geoclones.ipynb).
 
 UMAP for variant AF for [ID01](Analyses/20230114_7614_Ampliseq_QC/UMAP/7614_UMAP.ipynb) and [ID05](Analyses/20221223_7669_Ampliseq_QC/UMAP/7669_UMAP.ipynb).
+Simulated contamination and deconvolution for [ID01](Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_variant_by_sample_heatmap_ContC-T.ipynb), [ID05_contamination](Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_concolved_virtual_75COUPT2n25TBR1_heatmap.ipynb), [ID05 deconvolution](Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_deconvolved_DLX1_heatmap.ipynb).
+Estimating the contribution of dorsal and ventral origin for DLX1+ inhibitory neurons for [ID01](Analyses/20230114_7614_Ampliseq_QC/Basic_correlation/7614_beta.ipynb) and [ID05](Analyses/20221223_7669_Ampliseq_QC/Basic_characteristics_of_variants/7669_beta.ipynb)
 
 -----------------------------------
 
