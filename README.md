@@ -1,5 +1,5 @@
 # Human Inhibitory Neuron
-This repository contains codes and pipelines, as well as data used in the analysis of human inhibitory and excitatory neuronal clonal dynamics and lineage relationships, with cell-type-specific mosaic variant barcoding analysis (cMVBA). 
+This repository contains codes and pipelines, as well as data used in the analysis of human inhibitory and excitatory neuronal clonal dynamics and lineage relationships, with cell-type-specific mosaic variant barcoding analysis (cMVBA). WGS, MPAS, snMPAS, snRNA-seq data are available from multiple neurotypical postmortem donors. Raw sequences from cortical regions, subregions from ID01 and ID05 are available at the NDA website under accession number [#919](https://nda.nih.gov/study.html?id=919) and SRA under accession numbers [PRJNA736951](https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA736951&o=acc_s%3Aa) and [PRJNA799597](https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA799597&o=acc_s%3Aa).
 
 -----------------------------------
 
@@ -84,15 +84,15 @@ Estimating the contribution of dorsal and ventral origin for DLX1+ inhibitory ne
 
 -----------------------------------
 
-### 5. Contact:
+### 5. Cite the data and codes:
+Chung C, Yang X, et al., Gleeson JG. Cell-type-resolved somatic mosaicism reveals clonal dynamics of the human forebrain. 2023. ([bioRxiv, DOI:10.1101/2023.10.24.563814](https://www.biorxiv.org/content/10.1101/2023.10.24.563814v2.full))
+
+-----------------------------------
+
+### 6. Contact:
 
 :email: Changuk Chung: [chchung@health.ucsd.edu](mailto:chchung@health.ucsd.edu)
 
 :email: Xiaoxu Yang: [xiy010@health.ucsd.edu](mailto:xiy010@health.ucsd.edu), [yangxiaoxu-shishen@hotmail.com](mailto:yangxiaoxu-shishen@hotmail.com)
 
 :email: Joseph Gleeson: [jogleeson@health.ucsd.edu](mailto:jogleeson@health.ucsd.edu), or the Gleeson lab [gleesonlab@health.ucsd.edu](gleesonlab@health.ucsd.edu)
-
------------------------------------
-
-### 6. Cite the data and codes:
-Chung C, Yang X, et al., Gleeson JG. Cell-type-resolved somatic mosaicism reveals clonal dynamics of the human forebrain. 2023. ([bioRxiv, DOI:10.1101/2023.10.24.563814](https://www.biorxiv.org/content/10.1101/2023.10.24.563814v2.full))
