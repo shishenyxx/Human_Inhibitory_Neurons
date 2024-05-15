@@ -95,6 +95,6 @@ Estimating the contribution of dorsal and ventral origin for DLX1+ inhibitory ne
 -----------------------------------
 
 ### 6. Cite the data and codes:
-Chung C, Yang X, et al., Gleeson JG. Cell-type-resolved mosaicism reveals clonal dynamics of the human forebrain. 2024. ([Nature, DOI:10.1038/s41586-024-07292-5](https://www.nature.com/articles/s41586-024-07292-5))
+Chung C, Yang X, et al., Gleeson JG. Cell-type-resolved mosaicism reveals clonal dynamics of the human forebrain. 2024. (Nature, [DOI: 10.1038/s41586-024-07292-5](https://www.nature.com/articles/s41586-024-07292-5), [PMID: 38600385](https://pubmed.ncbi.nlm.nih.gov/38600385/) )
 
 
