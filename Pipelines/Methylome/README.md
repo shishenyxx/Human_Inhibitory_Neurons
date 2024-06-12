@@ -12,6 +12,7 @@ Also download prereqs as specified on bismark's website
 packages: argparse, textwrap, numpy
 #### [R](https://anaconda.org/conda-forge/r-base) (4.1.3)
 libraries: lsa, pheatmap, ggfortify
+#### [TrimGalore](https://github.com/FelixKrueger/TrimGalore) (0.6.10)
 
 ### Prepare genome
 Put your fasta in the `resources` folder.
