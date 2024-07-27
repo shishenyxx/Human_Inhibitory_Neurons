@@ -1,4 +1,5 @@
 samples = glob_wildcards("../input/{sample}_R1.fastq.gz").sample
+
 reads = ['R1','R2']
 
 main = []
@@ -8,8 +9,9 @@ ucsc_regions = glob_wildcards("../resources/UCSC_regions/{bed}.bed").bed
 rule all:
     input:
         expand("../output/{sample}_bismark_bt2.deduplicated.bedGraph_UCSC.bedGraph",sample=samples),
+        expand("../output/UCSC_genes/{bed}_combined.bedgraph",bed=ucsc_regions),
         "../output/methylation_per_gene.tsv",
-        expand("../output/qc/mosdepth/{sample}.mosdepth.summary.txt",sample=samples),
+        "../output/plot.eps"
         
 rule trim:
     input:
@@ -79,14 +81,14 @@ rule bismark:
         os.path.abspath("../scratch/bismark/{sample}/{sample}_bismark_bt2.bam")
     params:
         dir=directory("../scratch/bismark/{sample}/"),
-        parallel=4,
+        parallel=3,
         p=4,
         score="L,0,-0.6"
     log:
         os.path.abspath("../logs/bismark/{sample}.log")
     resources:
         walltime=100
-    threads: 32
+    threads: 24
     shell:
         "cd {params.dir} && bismark --parallel {params.parallel} -p {params.p} "
         "--score_min {params.score} "
@@ -103,7 +105,7 @@ rule deduplicate:
         os.path.abspath("../logs/bismark/{sample}_deduplicate.log")
     resources:
         walltime=16
-    threads: 16
+    threads: 24
     shell:
         "cd {params.dir} && deduplicate_bismark --bam {input} 2> {log}"
 
@@ -115,13 +117,13 @@ rule extract_methylation:
         "../scratch/bismark/{sample}/{sample}_bismark_bt2.deduplicated.bismark.cov.gz"
     params:
         dir=directory(os.path.abspath("../scratch/bismark/{sample}/")),
-        parallel=4,
+        parallel=3,
         cutoff=5,
     log:
         os.path.abspath("../logs/bismark/{sample}_extract.log")
     resources:
         walltime=32
-    threads: 32
+    threads: 24
     shell:
         "cd {params.dir} && bismark_methylation_extractor --cutoff {params.cutoff} "
         "--parallel {params.parallel} --gzip --ucsc --bedGraph {input} 2> {log}"
@@ -264,3 +266,16 @@ rule normalize:
     shell:
         "python scripts/normalize.py -i {input.merged} -g {input.genes} -o {output} "
         "--gl --tm --rg --rn 2> {log}"
+
+rule plot:
+    input:
+        "../output/methylation_per_gene.tsv",
+    output:
+        "../output/plot.eps",
+    log:
+        "../logs/plot.log"
+    resources:
+        walltime=1
+    threads: 4
+    shell:
+        "Rscript scripts/plot.R 2> {log}"
