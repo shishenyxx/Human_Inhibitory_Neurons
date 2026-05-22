@@ -86,7 +86,7 @@ Estimating the contribution of dorsal and ventral origin for DLX1+ inhibitory ne
 
 ### 5. Contact:
 
-:email: Changuk Chung: [chchung@health.ucsd.edu](mailto:chchung@health.ucsd.edu)
+:email: Changuk Chung: [chchuk@kaist.ac.kr](mailto:chchuk@kaist.ac.kr)
 
 :email: Xiaoxu Yang: [xiaoxu.yang@genetics.utah.edu](xiaoxu.yang@genetics.utah.edu), or the Yang Lab [xiaoxuyanglab@gmail.com](mailto:xiaoxuyanglab@gmail.com)
 
